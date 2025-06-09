@@ -1,2 +1,74 @@
-README
--
+# 🌳 Verificador de Ancestría en Árbol Enraizado
+
+Este proyecto implementa una solución en JavaScript (Node.js) para determinar si un nodo `u` es ancestro de un nodo `v` dentro de un árbol enraizado dado, procesando múltiples consultas.
+
+## 📝 Descripción del Problema
+
+Se nos proporciona un árbol enraizado con `N` vértices, donde el nodo `1` es la raíz. La estructura del árbol se define mediante `N-1` aristas. Posteriormente, se reciben `Q` consultas, cada una consistente en un par de nodos `(u, v)`. Para cada consulta, el programa debe determinar si `u` es un ancestro de `v`. Un nodo se considera ancestro de sí mismo.
+
+**Formato de Entrada:**
+1.  La primera línea contiene dos enteros: `N` (número de nodos) y `Q` (número de consultas).
+2.  Las siguientes `N-1` líneas contienen cada una dos enteros `u` y `v`, representando una arista entre el nodo `u` y el nodo `v`.
+3.  Las siguientes `Q` líneas contienen cada una dos enteros `u` y `v`, representando una consulta.
+
+**Formato de Salida:**
+Para cada consulta, el programa debe imprimir "YES" si `u` es ancestro de `v`, o "NO" en caso contrario, cada uno en una nueva línea.
+
+## 💡 Enfoque de la Solución
+
+La solución implementada utiliza un **Recorrido en Profundidad (DFS)** para preprocesar el árbol. Durante este recorrido, se calculan dos valores para cada nodo:
+
+*   `tin[u]`: El "tiempo" o instante en que el DFS entra por primera vez al nodo `u`.
+*   `tout[u]`: El "tiempo" o instante en que el DFS ha terminado de explorar todos los descendientes del nodo `u` y está saliendo de él.
+
+Un nodo `u` es ancestro de un nodo `v` (incluyendo el caso `u == v`) si y solo si el intervalo de tiempo de `v` está completamente contenido dentro del intervalo de tiempo de `u`. Esto se traduce en la condición:
+`tin[u] <= tin[v] AND tout[u] >= tout[v]`
+
+Este preprocesamiento permite que cada consulta de ancestría se responda en tiempo constante (O(1)), resultando en una complejidad total de O(N + Q), lo cual es eficiente para las restricciones dadas (N, Q hasta 10⁵).
+
+## 🛠️ Estructura del Código (`main.js`)
+
+El script `main.js` está estructurado de la siguiente manera:
+
+1.  **Variables Globales:** Para `nGlobal`, `adjGlobal` (lista de adyacencia), `tinGlobal`, `toutGlobal`, y `timerGlobal`.
+2.  **`dfsTimers(uNode, pNode)`:** Función recursiva que realiza el DFS, poblando los arrays `tinGlobal` y `toutGlobal`.
+3.  **`esAncestroDfs(uQuery, vQuery)`:** Función que verifica la condición de ancestría utilizando los arrays `tinGlobal` y `toutGlobal`.
+4.  **`solve(inputLines)`:** Función principal que:
+    *   Parsea `N` y `Q`.
+    *   Construye la lista de adyacencia a partir de las `N-1` aristas.
+    *   Llama a `dfsTimers` para el preprocesamiento.
+    *   Lee las `Q` consultas y utiliza `esAncestroDfs` para generar los resultados.
+    *   Imprime los resultados.
+5.  **Lectura de Input:** Se utiliza el módulo `readline` de Node.js para leer la entrada desde `process.stdin`.
+
+## 🚀 Cómo Ejecutar
+
+1.  Asegúrate de tener [Node.js](https://nodejs.org/) instalado.
+2.  Clona este repositorio o descarga el archivo `main.js`.
+3.  Prepara un archivo de texto con el input (por ejemplo, `input.txt`) siguiendo el formato especificado.
+4.  Ejecuta el script desde tu terminal:
+    ```bash
+    node main.js < input.txt
+    ```
+
+##  📄 Ejemplo de Input
+```
+4 5
+1 3
+3 2
+2 4
+1 4
+4 4
+4 1
+3 4
+3 3
+```
+
+### ✅ Salida Esperada para el Ejemplo
+```
+YES
+YES
+NO
+YES
+YES
+```
